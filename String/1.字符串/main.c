@@ -103,7 +103,6 @@ int main() {
   //
   // printf_s("-------\n");
 
-
   // ClearString(&copy);
   // PrintString(copy);
   // printf_s("copy 字符串的长度:%d\n", StrLength(copy));
@@ -146,7 +145,17 @@ bool StrCopy(String *des, String src) {
   return true;
 }
 
-int StrCompare(String s1, String s2) { return s1.length - s2.length; }
+int StrCompare(String s1, String s2) {
+  // 挨个对比每个字符
+  for (int i = 0; i < s1.length && i < s2.length; i++) {
+    if (s1.buf[i] != s2.buf[i]) {
+      return s1.buf[i] - s2.buf[i];
+    }
+  }
+
+  // 此时有一个字符串更长或等长
+  return s1.length - s2.length;
+}
 
 int StrLength(String s) { return s.length; }
 
@@ -200,7 +209,7 @@ void ClearString(String *s) {
   s->length = 0;
 }
 
-void DestoryString(String *s){
+void DestoryString(String *s) {
   free(s->buf);
   free(s);
 }

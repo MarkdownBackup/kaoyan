@@ -45,6 +45,15 @@ bool Concat(String *des, String s1, String s2);
 // TODO:
 int Index(String haystack, String needle);
 
+// 字符串匹配 暴力解法
+//
+// 匹配成功 返回第一个匹配到的下标
+//
+// 匹配失败 返回-1
+int strStrWithSimple(String haystack, String needle);
+
+int strStr(String haystack, String needle);
+
 // 清空操作,将s置为空串
 void ClearString(String *s);
 
@@ -59,7 +68,7 @@ int main() {
 
   InitString(&s);
 
-  StrAssign(&s, "zhang3");
+  StrAssign(&s, "zhang3 woaini");
 
   PrintString(s);
   printf_s("字符串的长度:%d\n", StrLength(s));
@@ -109,9 +118,23 @@ int main() {
   //
   // printf_s("-------\n");
 
-  DestoryString(&s);
+  // DestoryString(&s);
+  //
+  // PrintString(s);
 
-  PrintString(s);
+  printf_s("----字符串匹配----\n");
+
+  String a;
+  InitString(&a);
+  StrAssign(&a, "abcabdabcabc");
+
+  String b;
+  InitString(&b);
+  StrAssign(&b, "ababaa");
+
+  printf_s("%d\n", Index(a, b));
+
+  printf_s("-------\n");
 
   return 0;
 }
@@ -213,3 +236,77 @@ void DestoryString(String *s) {
   free(s->buf);
   free(s);
 }
+
+int strStrWithSimple(String haystack, String needle) {
+  // 暴力
+  int i = 0;
+  int j = 0;
+
+  while (i < haystack.length && j < needle.length) {
+    if (haystack.buf[i] == needle.buf[j]) {
+      i++;
+      j++;
+    } else {
+      i = i - j + 1;
+      j = 0;
+    }
+  }
+
+  if (j > needle.length - 1) {
+    return i - j;
+  }
+
+  return -1;
+}
+
+void getNext(String patern, int *next) {
+  int i = 1;
+  int j = 0;
+
+  while (i < patern.length) {
+    if (patern.buf[i] == patern.buf[j]) {
+      next[i] = j + 1;
+      i++;
+      j++;
+    } else if (j > 0) {
+      j = next[j - 1];
+    } else {
+      // j == 0
+      i++;
+    }
+  }
+}
+
+int strStr(String haystack, String needle) {
+  int next[100] = {0};
+
+  getNext(needle, next);
+
+  // 打印next数组
+  for(int i = 0; i < 100; i ++){
+    printf_s("%d ", next[i]);
+  }
+  printf("\n");
+
+  int i = 0;
+  int j = 0;
+  while (i < haystack.length && j < needle.length) {
+    if (haystack.buf[i] == needle.buf[j]) {
+      i++;
+      j++;
+    } else if (j > 0) {
+      j = next[j - 1];
+    } else {
+      // j == 0
+      i++;
+    }
+  }
+
+  if (j  == needle.length) {
+    return i - j;
+  }
+
+  return -1;
+}
+
+int Index(String haystack, String needle) { return strStr(haystack, needle); }
